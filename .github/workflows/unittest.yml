@@ -7,6 +7,7 @@ jobs:
     name: PMDK_runners
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [[self-hosted, rhel], [self-hosted, sles]]
     env:
@@ -19,8 +20,16 @@ jobs:
 
         - name: Get system information
           run: |
-            ./$WORKDIR/get-system-info.sh
+            bash -i ./$WORKDIR/get-system-info.sh
 
         - name: Build
           run: |
             ./$WORKDIR/build-pmdk.sh
+
+        - name: Create testconfig files
+          run: |
+            ./$WORKDIR/createTestconfig.sh
+
+        - name: Run tests
+          run: |
+            make check
